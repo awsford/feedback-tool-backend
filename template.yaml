@@ -9,6 +9,8 @@ Description: >
 Globals:
   Function:
     Timeout: 3
+  Api:
+    Cors: "*"
 
 Resources:
   GetSessionsFunction:
@@ -22,11 +24,28 @@ Resources:
         Variables:
           SESSION_TABLE_NAME: !Sub "${AWS::StackName}-Sessions"
       Events:
-        HelloWorld:
+        Feedback:
           Type: Api
           Properties:
             Path: /sessions
             Method: get
+  
+  PutScoresFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: put-scores/
+      Handler: app.handler
+      Runtime: nodejs12.x
+      Policies: AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          SESSION_TABLE_NAME: !Sub "${AWS::StackName}-Scores"
+      Events:
+        Feedback:
+          Type: Api
+          Properties:
+            Path: /scores
+            Method: post
   
   SessionsTable:
     Type: AWS::DynamoDB::Table
