@@ -1,33 +1,39 @@
-// const axios = require('axios')
-// const url = 'http://checkip.amazonaws.com/';
-let response;
+const AWS = require('aws-sdk');
+const db = new AWS.DynamoDB.DocumentClient();
 
-/**
- *
- * Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
- * @param {Object} event - API Gateway Lambda Proxy Input Format
- *
- * Context doc: https://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html 
- * @param {Object} context
- *
- * Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
- * @returns {Object} object - API Gateway Lambda Proxy Output Format
- * 
- */
-exports.lambdaHandler = async (event, context) => {
+exports.handler = async (event, context) => {
+    let response = {};
+    let statusCode = 400;
+    let session = null;
+    let error = null;
+
+    const event_id = event.queryStringParameters.id;
+
     try {
-        // const ret = await axios(url);
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: 'hello world',
-                // location: ret.data.trim()
-            })
-        }
-    } catch (err) {
-        console.log(err);
-        return err;
+        const db_response = await getItem(process.env.SESSION_TABLE_NAME, event_id);
+
+        statusCode = 200;
+        session = db_response.Item;
+
+        console.log("Fetched Session from DB: ");
+        console.log(JSON.stringify(session));
+    }
+    catch (e) {
+        console.log("Unable to fetch session from DB: ");
+        console.log(e);
+        error = e;
     }
 
-    return response
+    response = {
+        'statusCode': statusCode,
+        'body': JSON.stringify({ session, error })
+    };
+}
+
+const getItem = (table, key) => {
+    const params = {
+        TableName: table,
+        Key: { event_id: key }
+    };
+    return db.get(params).promise();
 };
