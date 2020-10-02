@@ -28,6 +28,7 @@ exports.handler = async (event, context) => {
         'statusCode': statusCode,
         'body': JSON.stringify({ session, error })
     };
+    return response;
 }
 
 const getItem = (table, key) => {
