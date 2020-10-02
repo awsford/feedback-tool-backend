@@ -66,10 +66,10 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/sessions/"
+  GetSessionsFunction:
+    Description: "GetSessions Lambda Function ARN"
+    Value: !GetAtt GetSessionsFunction.Arn
+  GetSessionsFunctionIamRole:
+    Description: "Implicit IAM Role created for GetSessions Function"
+    Value: !GetAtt GetSessionsFunctionRole.Arn
