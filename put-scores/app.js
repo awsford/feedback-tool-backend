@@ -7,20 +7,21 @@ exports.handler = async (event, context) => {
 
     let response = {};
     let statusCode = 400;
-    let session = null;
     let error = null;
+    
+    let body = JSON.parse(event.body);
 
-    const session = event.body.session.replace(/ /g, "-");
+    const session = body.session.replace(/ /g, "-");
 
     const item = {
-        event_id: event.body.event_id,
-        user_id: event.body.user_id + "_" + session,
-        score: event.body.score,
+        event_id: body.event_id,
+        user_id: body.user_id + "_" + session,
+        score: body.score,
         createdAt: Math.round(new Date().getTime() / 1000)
-    }
+    };
 
     try {
-        await putItem(process.env.SCORES_TABLE_NAME, event_id);
+        await putItem(process.env.SCORES_TABLE_NAME, item);
 
         statusCode = 200;
         session = "Successfully added to scores DB";
@@ -37,7 +38,7 @@ exports.handler = async (event, context) => {
         'body': JSON.stringify({ session, error })
     };
     return response;
-}
+};
 
 const putItem = (table, item) => {
     const params = {
