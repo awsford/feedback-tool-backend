@@ -39,7 +39,7 @@ Resources:
       Policies: AmazonDynamoDBFullAccess
       Environment:
         Variables:
-          SESSION_TABLE_NAME: !Sub "${AWS::StackName}-Scores"
+          SCORES_TABLE_NAME: !Sub "${AWS::StackName}-Scores"
       Events:
         Feedback:
           Type: Api
